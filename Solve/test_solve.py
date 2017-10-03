@@ -23,6 +23,20 @@ class TestSolver(TestCase):
         self.assertEqual(x, [0, 7])
         self.assertEqual(opt, 28)
 
+    def test_extreme(self):
+        """
+        max 3x + 4y
+        0 <= 0
+        x >= 0
+        y >= 0
+        """
+        obj = ['max', 3, 4]
+        cons = [[0, 0, '<=', 0],
+                [1, 0, '>=', 0],
+                [0, 1, '>=', 0]]
+        s = solve.Solve(2, cons, obj)
+        x, opt = s.solve()
+        self.assertEqual(x, 'infeasible')
 
 if __name__ == '__main__':
     main()
