@@ -1,0 +1,9 @@
+4                 # the number of variants
+max 9 5 6 4       # the objective function max 9x1 + 5x2 + 6x3 + 4x4
+0                 # if you want to add a constant number into objective function, write here, otherwise write 0
+6 3 5 2 <= 10     # constraints, this line represents 6x1 + 3x2 + 5x3 + 2x4 <= 10
+0 0 1 1 <= 1
+-1 0 1 0 <= 0
+0 -1 0 1 <= 0
+1 1 0 0           # the optimal solution is x1 = 1, x2 = 1, x3 = 0, x4 = 0
+14                # the optimal result is 14
