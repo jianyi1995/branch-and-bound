@@ -1,5 +1,5 @@
 """
-the function realizes a simple linear solver with the help of Gurobi
+the class realizes a simple linear solver with the help of Gurobi
 the input model can be a maximum or minmum problem
 and the solver will return the result and optimal
 """
@@ -105,10 +105,10 @@ class Solve(object):
         if self.m.status == GRB.OPTIMAL:
             x = self.m.getAttr('x')
             opt = self.m.objVal
+            return x, opt
         elif self.m.status == GRB.INFEASIBLE:
             return 'infeasible'
         elif self.m.status == GRB.UNBOUNDED:
             return 'unbounded'
         elif self.m.status == GRB.INF_OR_UNBD:
             return ['infeasible', 'unbounded']
-        return x, opt
