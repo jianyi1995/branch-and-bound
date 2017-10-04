@@ -84,3 +84,23 @@ class BandB(object):
             cons[j].append(origin_cons[j][-2])
             cons[j].append(origin_cons[j][-1] - cons_constant[j])
         return number, cons, obj, constant
+
+    def add_active(self, fixed, index, opt):
+        branch_i = 0
+        # branch_i means the variable index that needs to be branch
+        while index >= 0:
+            if fixed[branch_i] == -1:
+                index -= 1
+            branch_i += 1
+        branch_i -= 1
+        key = self.queue.get(opt, None)
+        if not key:
+            self.queue[opt] = []
+        tmp = fixed.copy()
+        tmp[branch_i] = 0
+        self.queue[opt].append(tmp)
+        tmp = fixed.copy()
+        tmp[branch_i] = 1
+        self.queue[opt].append(tmp)
+
+
