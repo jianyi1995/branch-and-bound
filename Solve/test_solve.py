@@ -104,5 +104,32 @@ class TestSolver(TestCase):
         self.assertEqual(x, [0, 2, 1])
         self.assertEqual(opt, 0)
 
+    def test_constant(self):
+        """
+        maximize 14
+        0 <= 1 
+        """
+        obj = ['max', 0]
+        cons = [[0, '<=', 1]]
+        s = solve.Solve(1, cons, obj, 14)
+        x, opt = s.solve()
+        self.assertEqual(opt, 14)
+
+    def test_another_constant(self):
+        """
+        max 20
+        2 <= -4
+        1 <= 0
+        1 <= 1
+        """
+        obj = ['max', 0]
+        cons = [[0, '<=', -6],
+                [0, '<=', -1],
+                [0, '<=', 0]]
+        constant = 20
+        s = solve.Solve(1, cons, obj, constant)
+        x, opt = s.solve()
+        self.assertEqual(x, 'infeasible')
+
 if __name__ == '__main__':
     main()
