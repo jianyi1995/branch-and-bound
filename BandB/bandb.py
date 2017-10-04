@@ -110,4 +110,17 @@ class BandB(object):
         tmp[branch_i] = 1
         self.queue[opt].append(tmp)
 
+    def get_active(self):
+        """
+        get an active node which has the greatest bound value and delete it from the queue
+        
+        :return: the fixed list of this node to generate the new lp
+        """
+        key = max(self.queue)
+        fixed = self.queue[key].pop(0)
+        if not self.queue[key]:
+            self.queue.pop(key)
+        return fixed
+
+
 
