@@ -123,6 +123,48 @@ class TestSolver(TestCase):
         s.add_active(fixed, index, opt)
         self.assertEqual(s.queue, {16: [[-1, 0, 1], [-1, -1, 0], [-1, -1, 1]]})
 
+    def test_get_active(self):
+        """
+        assume:
+        self.queue = {16:[[-1, 0, 1], [1, 0, 1]], 14: [[-1, 0, 1]]}
+        no add operation,
+        after first get, it should return [-1, 0, 1], the queue becomes {16: [[1, 0, 1]], 14: [[-1, 0, 1]]}
+        the second get, it should return [1, 0, 1], the queue becomes {14: [[-1, 0, 1]]}
+        the third one, it should return [-1, 0, 1], the queue becomes empty
+        """
+        s = bandb.BandB(0, 0, 0)
+        s.queue = {16: [[-1, 0, 1], [1, 0, 1]], 14: [[-1, 0, 1]]}
+        fixed = s.get_active()
+        self.assertEqual(fixed, [-1, 0, 1])
+        self.assertEqual(s.queue, {16: [[1, 0, 1]], 14: [[-1, 0, 1]]})
+        fixed = s.get_active()
+        self.assertEqual(fixed, [1, 0, 1])
+        self.assertEqual(s.queue, {14: [[-1, 0, 1]]})
+        fixed = s.get_active()
+        self.assertEqual(fixed, [-1, 0, 1])
+        self.assertEqual(s.queue, {})
+
+    def test_add_and_get_active(self):
+        """
+        assume:
+        self.queue = {16: [[1, 0, 1]]}
+        after one get ,one add and then two get operations
+        """
+        s = bandb.BandB(0, 0, 0)
+        s.queue = {16: [[1, 0, 1]]}
+        fixed = s.get_active()
+        self.assertEqual(fixed, [1, 0, 1])
+        self.assertEqual(s.queue, {})
+        s.add_active([-1, 0, -1], 1, 16)
+        self.assertEqual(s.queue, {16: [[-1, 0, 0], [-1, 0, 1]]})
+        fixed = s.get_active()
+        self.assertEqual(fixed, [-1, 0, 0])
+        self.assertEqual(s.queue, {16: [[-1, 0, 1]]})
+        fixed = s.get_active()
+        self.assertEqual(fixed, [-1, 0, 1])
+        self.assertEqual(s.queue, {})
+
+
 
 if __name__ == '__main__':
     main()
