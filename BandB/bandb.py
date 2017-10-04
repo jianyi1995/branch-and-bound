@@ -20,7 +20,7 @@ class BandB(object):
         :param number constant: the constant in the objective function
         
     """
-    def __init__(self, number, cons, obj, constant):
+    def __init__(self, number, cons, obj, constant=0):
         """
         init class with original problem parameter
         """
@@ -69,7 +69,9 @@ class BandB(object):
         for i in range(cons_number):
             cons.append([])
         for i in range(self.number):
-            if fixed == 1:
+            if fixed[i] == 0:
+                pass
+            elif fixed[i] == 1:
                 constant += self.obj[i + 1]
                 for j in range(cons_number):
                     cons_constant[j] += self.cons[j][i]
@@ -77,7 +79,7 @@ class BandB(object):
                 number += 1
                 obj.append(origin_obj[i + 1])
                 for j in range(cons_number):
-                    cons[j].append(origin_cons[i])
+                    cons[j].append(origin_cons[j][i])
         for j in range(cons_number):
             cons[j].append(origin_cons[j][-2])
             cons[j].append(origin_cons[j][-1] - cons_constant[j])
