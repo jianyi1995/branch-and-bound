@@ -94,5 +94,35 @@ class TestSolver(TestCase):
         self.assertEqual(obj, ['max', 3])
         self.assertEqual(constant, 6)
 
+    def test_add_active_with_empty_queue(self):
+        """
+        assume:
+        self.queue = {}
+        fixed = [-1, -1, -1] solution = [1, 0, 0.5] opt = 16 the element that needs to be branched is the third, 
+        so index is 2, and queue should be 16: [[-1, -1, 0], [-1, -1, 1]]
+        """
+        s = bandb.BandB(0, 0, 0)
+        fixed = [-1, -1, -1]
+        opt = 16
+        index = 2
+        s.add_active(fixed, index, opt)
+        self.assertEqual(s.queue, {16: [[-1, -1, 0], [-1, -1, 1]]})
+
+    def test_add_active_with_non_empty_queue(self):
+        """
+        assume:
+        self.queue = {16:[[-1, 0, 1]]}
+        fixed = [-1, -1, -1] solution = [1, 0, 0.5] opt = 16 the element that needs to be branched is the third, 
+        so index is 2, and queue should be 16: [[-1, 0, 1], [-1, -1, 0], [-1, -1, 1]]
+        """
+        s = bandb.BandB(0, 0, 0)
+        fixed = [-1, -1, -1]
+        opt = 16
+        index = 2
+        s.queue = {16: [[-1, 0, 1]]}
+        s.add_active(fixed, index, opt)
+        self.assertEqual(s.queue, {16: [[-1, 0, 1], [-1, -1, 0], [-1, -1, 1]]})
+
+
 if __name__ == '__main__':
     main()
