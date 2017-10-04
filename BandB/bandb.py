@@ -86,6 +86,13 @@ class BandB(object):
         return number, cons, obj, constant
 
     def add_active(self, fixed, index, opt):
+        """
+        this method add new active nodes into self.queue
+        Attributes:
+            :param fixed: the fixed of his father node
+            :param index: the element index that will be branched, it refers to the new lp programming
+            :param opt: the optimal value of father
+        """
         branch_i = 0
         # branch_i means the variable index that needs to be branch
         while index >= 0:
