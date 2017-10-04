@@ -7,23 +7,26 @@ from gurobipy import *
 
 
 class Solve(object):
-    def __init__(self, number, constraints, obj):
+    def __init__(self, number, constraints, obj, constant=0):
         """
         :param number: number means the number of variables
         :param constraints: all the constraints presented by a list of lists
         :param obj: the object function presented by a list
+        :param constant: the additional constant in objective function, the default value is zero
         
-        example: max 5x + 6y
+        example: max 5x + 6y + 7
         x + y <= 7
         9x + 7y <= 9
         
         number is 2
         constraints is [[1, 1, '<=', 7], [9, 7, '<=', 9]]
         obj is ['max', 5, 6]
+        constant is 7
         """
         self.number = number
         self.constraints = constraints
         self.obj = obj
+        self.constant = constant
         self.m = Model('LP')
         self.m.setParam('OutputFlag', 0)
 
@@ -57,6 +60,7 @@ class Solve(object):
         :return: nothing
         """
         linear_exp = self.generate_expression(l[1:])
+        linear_exp += self.constant
         if l[0] == 'max':
             tmp = GRB.MAXIMIZE
         elif l[0] == 'min':
@@ -95,7 +99,7 @@ class Solve(object):
         """
         solve the linear program
         
-        :return: the result
+        :return: the solution, opt
         """
         self.add_variables()
         self.add_obj(self.obj)
@@ -107,8 +111,8 @@ class Solve(object):
             opt = self.m.objVal
             return x, opt
         elif self.m.status == GRB.INFEASIBLE:
-            return 'infeasible'
+            return 'infeasible', 0
         elif self.m.status == GRB.UNBOUNDED:
-            return 'unbounded'
+            return 'unbounded', 0
         elif self.m.status == GRB.INF_OR_UNBD:
-            return ['infeasible', 'unbounded']
+            return 'infeasible', 'unbounded'
