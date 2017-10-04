@@ -131,5 +131,21 @@ class TestSolver(TestCase):
         x, opt = s.solve()
         self.assertEqual(x, 'infeasible')
 
+    def test_repetition_cons(self):
+        """
+        max x1
+        x1 <= 5
+        x1 <= 5
+        x1 <= 5 
+        """
+        obj = ['max', 1]
+        cons = [[1, '<=', 5],
+                [1, '<=', 5],
+                [1, '<=', 5]]
+        s = solve.Solve(1, cons, obj)
+        x, opt = s.solve()
+        self.assertEqual(x, [5])
+        self.assertEqual(opt, 5)
+
 if __name__ == '__main__':
     main()
