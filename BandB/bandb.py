@@ -123,7 +123,23 @@ class BandB(object):
             self.queue.pop(key)
         return fixed
 
-    def solve(self, number, cons, obj, constant):
+    def get_solution(self, solution, fixed):
+        """
+        using the fixed list and current lp solution to generate the complete solution
+        Args:
+            :param list solution: the current solution for the lp where some variables are fixed 
+            :param list fixed: presents which variables are fixed
+        :return: the complete solution for the original problem
+        """
+        s = []
+        for i in range(self.number):
+            if fixed[i] == -1:
+                s.append(solution.pop(0))
+            else:
+                s.append(fixed[i])
+        return s
+
+    def solve(self, number, cons, obj, constant, fixed):
         """
         by using the class Solve from solver to solve the current lp program and according to its solution and 
         optimal value to decide whether it is a feasible solution or it needs to be branched.
@@ -131,7 +147,8 @@ class BandB(object):
             :param int number: the number of variables
             :param list of list cons: constraints
             :param list obj: objective function
-            :param number constant: the constant in objective fucntion 
+            :param number constant: the constant in objective function
+            :param list fixed: representing which varaibles are fixed
         """
         s = solver.Solve(number, cons, obj, constant)
         solution, opt = s.solve()
@@ -140,8 +157,32 @@ class BandB(object):
         if not isinstance(solution, str) and opt > self.incumbent:
             index = self.is_int(solution)
             if index is not None:
-                self.add_active([-1]*self.number, index, opt)
+                self.add_active(fixed, index, opt)
             else:
                 self.incumbent = opt
-                self.solution = solution
+                self.solution = self.get_solution(solution, fixed)
 
+    def bandb(self):
+        """
+        the whole branch and bound algorithm,
+        at first, it generates the first node
+        and then when the queue is not empty, it explores all the active nodes to find the optimal solution
+        at last, the queue is empty, if it finds a feasible optimal solution, it prints it and return it.
+        otherwise, it prints no feasible solution and return None
+        
+        :return: the solution and optimal value if it exists, otherwise None 
+        """
+        self.solve(self.number, self.cons, self.obj, self.constant, [-1]*self.number)
+        while self.queue:
+            fixed = self.get_active()
+            number, cons, obj, constant = self.get_current_lp(fixed)
+            self.solve(number, cons, obj, constant, fixed)
+        if self.incumbent == float('-inf'):
+            print('there is no feasible solution')
+            return None, None
+        else:
+            print('the solution is')
+            print(self.solution)
+            print('the optimal value is')
+            print(self.incumbent)
+            return self.solution, self.incumbent
