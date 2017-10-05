@@ -189,8 +189,38 @@ class TestSolver(TestCase):
                 [0, 0, 0, 1, '<=', 1]]
         obj = ['max', 9, 5, 6, 4]
         s = bandb.BandB(number, cons, obj)
-        s.solve(s.number, s.cons, s.obj, s.constant)
+        s.solve(s.number, s.cons, s.obj, s.constant, [-1, -1, -1, -1])
         self.assertEqual(s.queue, {16.5: [[0, -1, -1, -1], [1, -1, -1, -1]]})
+
+    def test_bandb(self):
+        """
+        max 9x1 + 5x2 + 6x3 + 4x4
+        6x1 + 3x2 + 5x3 + 2x4 <= 10
+                     x3 +  x4 <= 1
+        -x1       +  x3       <= 0
+              -x2       +  x4 <= 0
+        0 <= x1, x2, x3, x4 <= 1
+        the optimal value is 14
+        and the solution is [1, 1, 0, 0]
+        """
+        number = 4
+        cons = [[6, 3, 5, 2, '<=', 10],
+                [0, 0, 1, 1, '<=', 1],
+                [-1, 0, 1, 0, '<=', 0],
+                [0, -1, 0, 1, '<=', 0],
+                [1, 0, 0, 0, '>=', 0],
+                [1, 0, 0, 0, '<=', 1],
+                [0, 1, 0, 0, '>=', 0],
+                [0, 1, 0, 0, '<=', 1],
+                [0, 0, 1, 0, '>=', 0],
+                [0, 0, 1, 0, '<=', 1],
+                [0, 0, 0, 1, '>=', 0],
+                [0, 0, 0, 1, '<=', 1]]
+        obj = ['max', 9, 5, 6, 4]
+        s = bandb.BandB(number, cons, obj)
+        solution, opt = s.bandb()
+        self.assertEqual(solution, [1, 1, 0, 0])
+        self.assertEqual(opt, 14)
 
 if __name__ == '__main__':
     main()
