@@ -222,5 +222,27 @@ class TestSolver(TestCase):
         self.assertEqual(solution, [1, 1, 0, 0])
         self.assertEqual(opt, 14)
 
+    def test_None(self):
+        """
+        max x1 + x2
+        x1 + x2 <= 1
+        x1 >= 0.5
+        x2 >= 0.5
+        0 <= x1, x2 <= 1
+        """
+        number = 2
+        cons = [[1, 1, '<=', 1],
+                [1, 0, '>=', 0.5],
+                [0, 1, '>=', 0.5],
+                [1, 0, '>=', 0],
+                [1, 0, '<=', 1],
+                [0, 1, '>=', 0],
+                [0, 1, '<=', 1]]
+        obj = ['max', 1, 1]
+        s = bandb.BandB(number, cons, obj)
+        solution, opt = s.bandb()
+        self.assertEqual(solution, None)
+        self.assertEqual(opt, None)
+
 if __name__ == '__main__':
     main()
