@@ -124,8 +124,19 @@ class BandB(object):
         return fixed
 
     def solve(self, number, cons, obj, constant):
+        """
+        by using the class Solve from solver to solve the current lp program and according to its solution and 
+        optimal value to decide whether it is a feasible solution or it needs to be branched.
+        Args:
+            :param int number: the number of variables
+            :param list of list cons: constraints
+            :param list obj: objective function
+            :param number constant: the constant in objective fucntion 
+        """
         s = solver.Solve(number, cons, obj, constant)
         solution, opt = s.solve()
+        # only when there is a feasible solution and the optimal value is greater than incumbent,
+        # this solution has the value, otherwise it will be fathomed
         if not isinstance(solution, str) and opt > self.incumbent:
             index = self.is_int(solution)
             if index is not None:
@@ -133,3 +144,4 @@ class BandB(object):
             else:
                 self.incumbent = opt
                 self.solution = solution
+
