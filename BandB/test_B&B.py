@@ -4,7 +4,6 @@ from BandB import bandb
 
 
 class TestSolver(TestCase):
-
     def test_is_int_none(self):
         s = bandb.BandB(0, 0, 0, 0)
         solution = [1.00000, 2, 3, 4.0, -2.0]
@@ -26,9 +25,9 @@ class TestSolver(TestCase):
         """
         origin_number = 3
         origin_cons = [[1, 1, 1, '<=', 5],
-                [1, 0, 0, '>=', 0],
-                [0, 1, 0, '>=', 0],
-                [0, 0, 1, '>=', 0]]
+                       [1, 0, 0, '>=', 0],
+                       [0, 1, 0, '>=', 0],
+                       [0, 0, 1, '>=', 0]]
         origin_obj = ['max', 3, 4, 6]
         fixed = [-1, -1, 1]
         s = bandb.BandB(origin_number, origin_cons, origin_obj)
@@ -164,7 +163,34 @@ class TestSolver(TestCase):
         self.assertEqual(fixed, [-1, 0, 1])
         self.assertEqual(s.queue, {})
 
-
+    def test_init(self):
+        """
+        max 9x1 + 5x2 + 6x3 + 4x4
+        6x1 + 3x2 + 5x3 + 2x4 <= 10
+                     x3 +  x4 <= 1
+        -x1       +  x3       <= 0
+              -x2       +  x4 <= 0
+        0 <= x1, x2, x3, x4 <= 1
+        after the first computing, the solution, opt are (5/6, 1, 0, 1) and 16.5
+        so the queue will become {16.5: [[0, -1, -1, -1], [1, -1, -1, -1]]}
+        """
+        number = 4
+        cons = [[6, 3, 5, 2, '<=', 10],
+                [0, 0, 1, 1, '<=', 1],
+                [-1, 0, 1, 0, '<=', 0],
+                [0, -1, 0, 1, '<=', 0],
+                [1, 0, 0, 0, '>=', 0],
+                [1, 0, 0, 0, '<=', 1],
+                [0, 1, 0, 0, '>=', 0],
+                [0, 1, 0, 0, '<=', 1],
+                [0, 0, 1, 0, '>=', 0],
+                [0, 0, 1, 0, '<=', 1],
+                [0, 0, 0, 1, '>=', 0],
+                [0, 0, 0, 1, '<=', 1]]
+        obj = ['max', 9, 5, 6, 4]
+        s = bandb.BandB(number, cons, obj)
+        s.init()
+        self.assertEqual(s.queue, {16.5: [[0, -1, -1, -1], [1, -1, -1, -1]]})
 
 if __name__ == '__main__':
     main()
