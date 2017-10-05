@@ -189,7 +189,7 @@ class TestSolver(TestCase):
                 [0, 0, 0, 1, '<=', 1]]
         obj = ['max', 9, 5, 6, 4]
         s = bandb.BandB(number, cons, obj)
-        s.init()
+        s.solve(s.number, s.cons, s.obj, s.constant)
         self.assertEqual(s.queue, {16.5: [[0, -1, -1, -1], [1, -1, -1, -1]]})
 
 if __name__ == '__main__':

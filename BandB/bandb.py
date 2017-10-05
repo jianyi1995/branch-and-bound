@@ -123,8 +123,8 @@ class BandB(object):
             self.queue.pop(key)
         return fixed
 
-    def init(self):
-        s = solver.Solve(self.number, self.cons, self.obj, self.constant)
+    def solve(self, number, cons, obj, constant):
+        s = solver.Solve(number, cons, obj, constant)
         solution, opt = s.solve()
         if not isinstance(solution, str) and opt > self.incumbent:
             index = self.is_int(solution)
