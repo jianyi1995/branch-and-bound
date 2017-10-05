@@ -20,6 +20,7 @@ class BandB(object):
         :param number constant: the constant in the objective function
         
     """
+
     def __init__(self, number, cons, obj, constant=0):
         """
         init class with original problem parameter
@@ -89,9 +90,9 @@ class BandB(object):
         """
         this method add new active nodes into self.queue
         Attributes:
-            :param fixed: the fixed of his father node
-            :param index: the element index that will be branched, it refers to the new lp programming
-            :param opt: the optimal value of father
+            :param list fixed: the fixed of his father node
+            :param int index: the element index that will be branched, it refers to the new lp programming
+            :param number opt: the optimal value of father
         """
         branch_i = 0
         # branch_i means the variable index that needs to be branch
@@ -122,5 +123,13 @@ class BandB(object):
             self.queue.pop(key)
         return fixed
 
-
-
+    def init(self):
+        s = solver.Solve(self.number, self.cons, self.obj, self.constant)
+        solution, opt = s.solve()
+        if not isinstance(solution, str) and opt > self.incumbent:
+            index = self.is_int(solution)
+            if index is not None:
+                self.add_active([-1]*self.number, index, opt)
+            else:
+                self.incumbent = opt
+                self.solution = solution
